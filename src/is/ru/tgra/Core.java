@@ -20,6 +20,7 @@ public class Core implements ApplicationListener{
     Sphere sphere;
     Cube cube;
     CrystalBox cbox;
+    Ship player;
     ParticleEffect particleEffect;
 
     Quad background;
@@ -60,6 +61,8 @@ public class Core implements ApplicationListener{
         this.particleEffect = new ParticleEffect();
         this.background = new Quad();
         this.skyBoxRotation = new Vector3D(0.0f,0.0f,0.0f);
+        this.player = new Ship();
+        Gdx.input.setCursorCatched(true);
     }
 
     @Override
@@ -122,15 +125,30 @@ public class Core implements ApplicationListener{
             cam.slide(0.0f, -10.0f * deltaTime, 0.0f);
         }
 
+        float x = Gdx.input.getDeltaX();
+        x = Gdx.graphics.getWidth()/2-Gdx.input.getX();
+        float y = Gdx.input.getDeltaY();
+        y = Gdx.graphics.getHeight()/2-Gdx.input.getY();
+
+        float sensitivity = 1.4f;
+
+        cam.pitch(sensitivity*y * deltaTime);
+        skyBoxRotation.x +=sensitivity*y * deltaTime;
+
+        cam.yaw(sensitivity*-x* deltaTime);
+        skyBoxRotation.y +=sensitivity*-x * deltaTime;
+        Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        System.out.println("("+x+","+y+")");
+
         this.particleEffect.update(deltaTime);
 
     }
 
     private void drawFloor()
     {
-        for(float fx = 0.0f; fx < 10.0f; fx += 1.0)
+        for(float fx = 0.0f; fx < 30.0f; fx += 1.0)
         {
-            for(float fz = 0.0f; fz < 10.0f; fz += 1.0)
+            for(float fz = 0.0f; fz < 30.0f; fz += 1.0)
             {
                 Gdx.gl11.glPushMatrix();
                 Gdx.gl11.glTranslatef(fx, 0.0f, fz);
@@ -173,6 +191,8 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glPopMatrix();
 
         Gdx.gl11.glMatrixMode(GL11.GL_MODELVIEW);
+
+
 
         // Set the ModelView matrix with respect to the camera.
         cam.setModelViewMatrix();
@@ -223,7 +243,13 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glPopMatrix();
 
 
-
+/*
+        Gdx.gl11.glPushMatrix();
+        Gdx.gl11.glTranslatef(cam.eye.x-1,cam.eye.y,cam.eye.z);
+        Gdx.gl11.glRotatef(skyBoxRotation.y, 0.0f, 1.0f, 0.0f);
+        this.player.draw();
+        Gdx.gl11.glPopMatrix();
+        */
     }
 
     @Override
