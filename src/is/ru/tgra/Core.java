@@ -42,19 +42,8 @@ public class Core implements ApplicationListener{
 
         Gdx.gl11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 
-        cam = new Camera(new Point3D(1.0f, 2.5f, 4.0f), new Point3D(0.0f, 2.5f, 0.0f), new Vector3D(0.0f, 1.0f, 0.0f));
+        cam = new Camera(new Point3D(1.0f, 1.0f, 1.0f), new Point3D(1.0f, 0.0f, 2.0f), new Vector3D(0.0f, -1.0f, 0.0f));
 
-        File file = new File(".");
-        File[] files = file.listFiles();
-        try {
-            System.out.println("Current dir : " + file.getCanonicalPath());
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        for (int fileInList = 0; fileInList < files.length; fileInList++)
-        {
-            System.out.println(files[fileInList].toString());
-        }
         sphere = new Sphere(50, 24);
         cube = new Cube("assets/textures/wood2.jpeg");
         this.cbox = new CrystalBox();
@@ -133,12 +122,12 @@ public class Core implements ApplicationListener{
         float sensitivity = 1.4f;
 
         cam.pitch(sensitivity*y * deltaTime);
-        skyBoxRotation.x +=sensitivity*y * deltaTime;
+        skyBoxRotation.x +=sensitivity*-y * deltaTime;
 
         cam.yaw(sensitivity*-x* deltaTime);
         skyBoxRotation.y +=sensitivity*-x * deltaTime;
         Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
-        System.out.println("("+x+","+y+")");
+        //System.out.println("("+x+","+y+")");
 
         this.particleEffect.update(deltaTime);
 
@@ -177,7 +166,8 @@ public class Core implements ApplicationListener{
 
         Gdx.gl11.glDepthMask(false);
         Gdx.gl11.glRotatef(skyBoxRotation.x, 1.0f, 0.0f, 0.0f);
-        Gdx.gl11.glRotatef(skyBoxRotation.y, 0.0f, 1.0f, 0.0f);
+        System.out.println("("+cam.v.x+","+cam.v.y+","+cam.v.z+")");
+        Gdx.gl11.glRotatef(-skyBoxRotation.y, 0.0f, 1.0f, 0.0f); //Hægri vinstri
         this.background.draw();
 
         Gdx.gl11.glDepthMask(true);
@@ -243,13 +233,14 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glPopMatrix();
 
 
-/*
         Gdx.gl11.glPushMatrix();
-        Gdx.gl11.glTranslatef(cam.eye.x-1,cam.eye.y,cam.eye.z);
-        Gdx.gl11.glRotatef(skyBoxRotation.y, 0.0f, 1.0f, 0.0f);
+        Point3D ppos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
+        ppos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -2.0f, cam.n))));
+        Gdx.gl11.glTranslatef(ppos.x,ppos.y,ppos.z);
+        Gdx.gl11.glRotatef(skyBoxRotation.y,0.0f,1.0f,0.0f);
+        //Gdx.gl11.glRotatef(skyBoxRotation.x,0.0f,0.0f,1.0f);
         this.player.draw();
         Gdx.gl11.glPopMatrix();
-        */
     }
 
     @Override

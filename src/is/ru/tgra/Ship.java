@@ -15,6 +15,7 @@ import java.nio.FloatBuffer;
  * To change this template use File | Settings | File Templates.
  */
 public class Ship {
+    Point3D pos;
     FloatBuffer vertexBuffer;
     FloatBuffer texCoordBuffer;
 
