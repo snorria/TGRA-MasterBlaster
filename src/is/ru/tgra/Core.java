@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL11;
+import is.ru.tgra.network.GameState;
+import is.ru.tgra.network.NetworkThread;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +30,13 @@ public class Core implements ApplicationListener{
     float rotationAngle = 0.0f;
     float deltaTime = 0.0f;
     Vector3D skyBoxRotation;
+    private NetworkThread network;
+
 
     @Override
     public void create() {
-
+        network = new NetworkThread();
+        network.start();
 
         Gdx.gl11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -131,6 +136,18 @@ public class Core implements ApplicationListener{
 
         this.particleEffect.update(deltaTime);
 
+        String message = String.format("move;%s;%s;%s;%s;%s;%s;%s;%s;%s",
+                Float.toString(cam.eye.x),
+                Float.toString(cam.eye.y),
+                Float.toString(cam.eye.z),
+                Float.toString(cam.n.x),
+                Float.toString(cam.n.y),
+                Float.toString(cam.n.z),
+                Float.toString(cam.u.x),
+                Float.toString(cam.u.y),
+                Float.toString(cam.u.z)
+                );
+        this.network.sendMessage(message);
     }
 
     private void drawFloor()
@@ -241,6 +258,14 @@ public class Core implements ApplicationListener{
         //Gdx.gl11.glRotatef(skyBoxRotation.x,0.0f,0.0f,1.0f);
         this.player.draw();
         Gdx.gl11.glPopMatrix();
+
+        for(is.ru.tgra.network.Player p : GameState.instance().getPlayers()) {
+
+            Gdx.gl11.glPushMatrix();
+            Gdx.gl11.glTranslatef(p.pos.x,p.pos.y,p.pos.z);
+            this.player.draw();
+            Gdx.gl11.glPopMatrix();
+        }
     }
 
     @Override
