@@ -7,9 +7,6 @@ import com.badlogic.gdx.graphics.GL11;
 import is.ru.tgra.network.GameState;
 import is.ru.tgra.network.NetworkThread;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * Created with IntelliJ IDEA.
  * User: Snorri
@@ -22,7 +19,7 @@ public class Core implements ApplicationListener{
     Sphere sphere;
     Cube cube;
     CrystalBox cbox;
-    Ship player;
+    ShipModel player;
     ParticleEffect particleEffect;
 
     Quad background;
@@ -55,7 +52,7 @@ public class Core implements ApplicationListener{
         this.particleEffect = new ParticleEffect();
         this.background = new Quad();
         this.skyBoxRotation = new Vector3D(0.0f,0.0f,0.0f);
-        this.player = new Ship();
+        this.player = new ShipModel();
         Gdx.input.setCursorCatched(true);
     }
 
