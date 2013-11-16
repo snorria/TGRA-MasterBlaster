@@ -20,7 +20,7 @@ public class ShipModel {
     Texture tex;
     public ShipModel()
     {
-        vertexBuffer = BufferUtils.newFloatBuffer(84);
+        vertexBuffer = BufferUtils.newFloatBuffer(132);
         //body
         vertexBuffer.put(new float[] {-0.35f, -0.5f, -0.25f, -0.25f, 0.25f, -0.10f, //toppur
                 0.35f, -0.5f, -0.25f, 0.25f, 0.25f, -0.10f, //toppur
@@ -35,7 +35,17 @@ public class ShipModel {
                 -0.25f, 0.25f, -0.10f, 0.25f, 0.25f, -0.10f, //efrabak
                 -1.00f, 0.4f, 0.0f, 1.00f, 0.4f, 0.0f, //efrabak
                 -0.35f, -0.5f, -0.25f, 0.35f, -0.5f, -0.25f, //fremritoppur
-                -0.1f, -1.5f, 0.0f, 0.1f, -1.5f, 0.0f}); //fremritoppur
+                -0.1f, -1.5f, 0.0f, 0.1f, -1.5f, 0.0f, //fremritoppur
+                //Debug box
+                -1.0f, -1.5f, -0.25f, -1.0f, 0.4f, -0.25f, //toppur
+                1.0f, 0.4f, -0.25f, 1.0f, -1.5f, -0.25f, //toppur
+                1.0f, 0.4f, -0.25f, 1.0f, -1.5f, -0.25f, //hægri
+                1.0f, -1.5f, 0.25f,1.0f, 0.4f, 0.25f, //hægri
+                -1.0f, -1.5f, 0.25f, -1.0f, 0.4f, 0.25f, //botn
+                1.0f, 0.4f, 0.25f, 1.0f, -1.5f, 0.25f, //botn
+                -1.0f, 0.4f, -0.25f, -1.0f, -1.5f, -0.25f, //vinstri
+                -1.0f, -1.5f, 0.25f,-1.0f, 0.4f, 0.25f //vinstri
+        });
         vertexBuffer.rewind();
 
         /*texCoordBuffer = BufferUtils.newFloatBuffer(48);
@@ -51,6 +61,8 @@ public class ShipModel {
     }
     public void draw()
     {
+
+        Gdx.gl11.glRotatef(-30.0f,1.0f,0.0f,0.0f);
         //TODO: Normals.....
         Gdx.gl11.glShadeModel(GL11.GL_SMOOTH);
         Gdx.gl11.glVertexPointer(3, GL11.GL_FLOAT, 0, vertexBuffer);
@@ -71,20 +83,28 @@ public class ShipModel {
         //neðri hlið
         Gdx.gl11.glPushMatrix();
         Gdx.gl11.glRotatef(180.0f,0.0f,1.0f,0.0f);
-        Gdx.gl11.glNormal3f(0.0f, 0.0f, -1.0f);
-        Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
-        Gdx.gl11.glNormal3f(1.0f, 0.0f, 0.0f);
-        Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 4, 4);
         Gdx.gl11.glNormal3f(0.0f, 0.0f, 1.0f);
-        Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 8, 4);
+        Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
         Gdx.gl11.glNormal3f(-1.0f, 0.0f, 0.0f);
+        Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 4, 4);
+        Gdx.gl11.glNormal3f(0.0f, 0.0f, -1.0f);
+        Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 8, 4);
+        Gdx.gl11.glNormal3f(1.0f, 0.0f, 0.0f);
         Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 12, 4);
-        Gdx.gl11.glNormal3f(0.0f, 1.0f, 0.0f);
+        Gdx.gl11.glNormal3f(0.0f, -1.0f, 0.0f);
         Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 16, 4);
-        Gdx.gl11.glNormal3f(0.0f, -1.0f, 0.0f);
+        Gdx.gl11.glNormal3f(0.0f, 1.0f, 0.0f);
         Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 20, 4);
-        Gdx.gl11.glNormal3f(0.0f, -1.0f, 0.0f);
+        Gdx.gl11.glNormal3f(0.0f, 1.0f, 0.0f);
         Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 24, 4);
         Gdx.gl11.glPopMatrix();
+
+        //ifdebug
+        Gdx.gl11.glDisable(GL11.GL_LIGHTING);
+        Gdx.gl11.glDrawArrays(GL11.GL_LINE_LOOP, 28, 4);
+        Gdx.gl11.glDrawArrays(GL11.GL_LINE_LOOP, 32, 4);
+        Gdx.gl11.glDrawArrays(GL11.GL_LINE_LOOP, 36, 4);
+        Gdx.gl11.glDrawArrays(GL11.GL_LINE_LOOP, 40, 4);
+        Gdx.gl11.glEnable(GL11.GL_LIGHTING);
     }
 }
