@@ -260,7 +260,8 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glPopMatrix();
 
         for(is.ru.tgra.network.Player p : GameState.instance().getPlayers()) {
-
+            //Vector3D.
+            //p.forward.
             Gdx.gl11.glPushMatrix();
             Gdx.gl11.glTranslatef(p.pos.x,p.pos.y,p.pos.z);
             this.player.draw();
