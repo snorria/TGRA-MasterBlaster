@@ -4,8 +4,11 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL11;
+import com.badlogic.gdx.utils.BufferUtils;
 import is.ru.tgra.network.GameState;
 import is.ru.tgra.network.NetworkThread;
+
+import java.nio.FloatBuffer;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,6 +23,8 @@ public class Core implements ApplicationListener{
     Cube cube;
     CrystalBox cbox;
     ShipModel player;
+    Shot shot;
+    Point3D playerPos;
     ParticleEffect particleEffect;
 
     Quad background;
@@ -28,6 +33,7 @@ public class Core implements ApplicationListener{
     float deltaTime = 0.0f;
     Vector3D skyBoxRotation;
     private NetworkThread network;
+    private UI ui;
 
 
     @Override
@@ -40,7 +46,7 @@ public class Core implements ApplicationListener{
         // Set up the projection matrix.
         Gdx.gl11.glMatrixMode(GL11.GL_PROJECTION);
         Gdx.gl11.glLoadIdentity();
-        Gdx.glu.gluPerspective(Gdx.gl11, 90, 1.333333f, 0.02f, 330.0f);
+        Gdx.glu.gluPerspective(Gdx.gl11, 90, 1.333333f, 0.02f, 1000.0f);
 
         Gdx.gl11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 
@@ -53,6 +59,7 @@ public class Core implements ApplicationListener{
         this.background = new Quad();
         this.skyBoxRotation = new Vector3D(0.0f,0.0f,0.0f);
         this.player = new ShipModel();
+        this.ui = new UI();
         Gdx.input.setCursorCatched(true);
     }
 
@@ -116,6 +123,7 @@ public class Core implements ApplicationListener{
             cam.slide(0.0f, -10.0f * deltaTime, 0.0f);
         }
 
+
         float x = Gdx.input.getDeltaX();
         x = Gdx.graphics.getWidth()/2-Gdx.input.getX();
         float y = Gdx.input.getDeltaY();
@@ -133,10 +141,19 @@ public class Core implements ApplicationListener{
 
         this.particleEffect.update(deltaTime);
 
+        playerPos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
+        playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-1.5f, cam.v), Vector3D.mult( -2.0f, cam.n))));
+
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+            //ShootLazer
+            Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
+            shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -25235235235.0f, cam.n))));
+            shot = new Shot(playerPos,shotEnd);
+        }
         String message = String.format("move;%s;%s;%s;%s;%s;%s;%s;%s;%s",
-                Float.toString(cam.eye.x),
-                Float.toString(cam.eye.y),
-                Float.toString(cam.eye.z),
+                Float.toString(playerPos.x),
+                Float.toString(playerPos.y),
+                Float.toString(playerPos.z),
                 Float.toString(cam.n.x),
                 Float.toString(cam.n.y),
                 Float.toString(cam.n.z),
@@ -145,6 +162,11 @@ public class Core implements ApplicationListener{
                 Float.toString(cam.u.z)
                 );
         this.network.sendMessage(message);
+
+        //shots
+        if(!(shot == null)){
+            shot.update(deltaTime);
+        }
     }
 
     private void drawFloor()
@@ -166,7 +188,7 @@ public class Core implements ApplicationListener{
     {
         Gdx.gl11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
         Gdx.gl11.glDisable(GL11.GL_LIGHTING);
-        Gdx.gl11.glDisable(GL11.GL_DEPTH_TEST);
+ /*       Gdx.gl11.glDisable(GL11.GL_DEPTH_TEST);
         Gdx.gl11.glMatrixMode(GL11.GL_PROJECTION);
         Gdx.gl11.glPushMatrix();
         //Gdx.gl11.glLoadIdentity();
@@ -196,16 +218,25 @@ public class Core implements ApplicationListener{
 
         Gdx.gl11.glMatrixMode(GL11.GL_MODELVIEW);
 
-
+*/
 
         // Set the ModelView matrix with respect to the camera.
         cam.setModelViewMatrix();
 
+        Gdx.gl11.glPushMatrix();
+        Gdx.gl11.glTranslatef(0f, 0f, 0f);
+
+        Gdx.gl11.glScalef(500, 500, 500);
+        this.background.draw();
+
+        Gdx.gl11.glPopMatrix();
 
         Gdx.gl11.glEnable(GL11.GL_LIGHTING);
         Gdx.gl11.glEnable(GL11.GL_LIGHT0);
         Gdx.gl11.glEnable(GL11.GL_LIGHT1);
         Gdx.gl11.glEnable(GL11.GL_DEPTH_TEST);
+
+
 
 
         Gdx.gl11.glPushMatrix();
@@ -246,11 +277,9 @@ public class Core implements ApplicationListener{
         sphere.draw();
         Gdx.gl11.glPopMatrix();
 
-
+        //Draw this client
         Gdx.gl11.glPushMatrix();
-        Point3D ppos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
-        ppos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -2.0f, cam.n))));
-        Gdx.gl11.glTranslatef(ppos.x,ppos.y,ppos.z);
+        Gdx.gl11.glTranslatef(playerPos.x,playerPos.y,playerPos.z);
         Gdx.gl11.glRotatef(skyBoxRotation.y,0.0f,1.0f,0.0f);
         //Gdx.gl11.glRotatef(skyBoxRotation.x,0.0f,0.0f,1.0f);
         this.player.draw();
@@ -264,6 +293,39 @@ public class Core implements ApplicationListener{
             this.player.draw();
             Gdx.gl11.glPopMatrix();
         }
+        //shots
+        if(!(shot == null)){
+            shot.draw();
+        }
+
+        //UI
+        Gdx.gl11.glDisable(GL11.GL_LIGHTING);
+        Gdx.gl11.glDisable(GL11.GL_DEPTH_TEST);
+        Gdx.gl11.glMatrixMode(GL11.GL_PROJECTION);
+        Gdx.gl11.glPushMatrix();
+        Gdx.gl11.glLoadIdentity();
+        Gdx.gl11.glOrthof(-1, 2, 0, 0, -1, 0);
+
+
+        Gdx.gl11.glMatrixMode(GL11.GL_MODELVIEW);
+        Gdx.gl11.glPushMatrix();
+        Gdx.gl11.glLoadIdentity();
+
+
+        Gdx.gl11.glDepthMask(false);
+        this.ui.draw();
+
+        Gdx.gl11.glDepthMask(true);
+
+        // pop model view matrix
+        Gdx.gl11.glPopMatrix();
+
+        Gdx.gl11.glMatrixMode(GL11.GL_PROJECTION);
+
+        // pop the projection matrix.
+        Gdx.gl11.glPopMatrix();
+
+        Gdx.gl11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 
     @Override
