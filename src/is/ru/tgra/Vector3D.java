@@ -57,4 +57,16 @@ public class Vector3D
 	{
 		return new Vector3D(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z);
 	}
+
+    public static double angle(Vector3D v1, Vector3D v2)
+    {
+        /*float dot = dot(v1,v2);
+        float lenSq1 = v1.x*v1.x + v1.y*v1.y + v1.z*v1.z;
+        float lenSq2 = v2.x*v2.x + v2.y*v2.y + v2.z*v2.z;
+
+        return Math.acos(dot/Math.sqrt(lenSq1 * lenSq2))*180/Math.PI;*/
+
+
+        return Math.acos((Vector3D.dot(v1,v2)/(v1.length()*v2.length())))*180/Math.PI;
+    }
 }

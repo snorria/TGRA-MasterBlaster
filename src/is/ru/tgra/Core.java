@@ -142,7 +142,7 @@ public class Core implements ApplicationListener{
         this.particleEffect.update(deltaTime);
 
         playerPos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
-        playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-1.5f, cam.v), Vector3D.mult( -2.0f, cam.n))));
+        playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-1.5f, cam.v), Vector3D.mult(-2.0f, cam.n))));
 
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             //ShootLazer
@@ -202,7 +202,7 @@ public class Core implements ApplicationListener{
 
         Gdx.gl11.glDepthMask(false);
         Gdx.gl11.glRotatef(skyBoxRotation.x, 1.0f, 0.0f, 0.0f);
-        System.out.println("("+cam.v.x+","+cam.v.y+","+cam.v.z+")");
+        //System.out.println("("+cam.v.x+","+cam.v.y+","+cam.v.z+")");
         Gdx.gl11.glRotatef(-skyBoxRotation.y, 0.0f, 1.0f, 0.0f); //Hægri vinstri
         this.background.draw();
 
@@ -279,17 +279,54 @@ public class Core implements ApplicationListener{
 
         //Draw this client
         Gdx.gl11.glPushMatrix();
-        Gdx.gl11.glTranslatef(playerPos.x,playerPos.y,playerPos.z);
-        Gdx.gl11.glRotatef(skyBoxRotation.y,0.0f,1.0f,0.0f);
-        //Gdx.gl11.glRotatef(skyBoxRotation.x,0.0f,0.0f,1.0f);
+        Vector3D up = Vector3D.cross(cam.n,cam.u);
+        Gdx.gl11.glTranslatef(playerPos.x, playerPos.y, playerPos.z);
+        Gdx.gl11.glRotatef(-skyBoxRotation.x, cam.u.x, cam.u.y, cam.u.z);
+        Gdx.gl11.glRotatef(-skyBoxRotation.y,up.x,up.y,up.z);
+
         this.player.draw();
         Gdx.gl11.glPopMatrix();
 
         for(is.ru.tgra.network.Player p : GameState.instance().getPlayers()) {
-            //Vector3D.
-            //p.forward.
             Gdx.gl11.glPushMatrix();
+
+            //p.forward.
             Gdx.gl11.glTranslatef(p.pos.x,p.pos.y,p.pos.z);
+            //Gdx.gl11.glRotatef((float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left),0f,1f,0f);
+            Float d1;
+            if(Vector3D.cross(new Vector3D(-1f,0f,0f),p.left).y<0)
+                d1 = (float) -Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+            else
+                d1 = (float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+            Gdx.gl11.glRotatef(d1,0f,1f,0f);
+
+
+            System.out.println("d1: "+d1);
+
+            Float d2;
+            if(Vector3D.cross(new Vector3D(0f,0f,-1f),p.forward).x<0)
+                d2 = (float) -Vector3D.angle(new Vector3D(0f,0f,-1f),p.forward);
+            else
+                d2 = (float) Vector3D.angle(new Vector3D(0f,0f,-1f),p.forward);
+            //System.out.println("d2: "+d2);
+
+            //Gdx.gl11.glRotatef(d2,1f,0f,0f);
+
+            Float d3;
+
+            if(Vector3D.cross(new Vector3D(-1f,0f,0f),p.left).z<0)
+                d3 = (float) -Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+            else
+                d3 = (float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+
+            //System.out.println("d3: "+d3);
+            //Gdx.gl11.glRotatef(d3,0f,0f,1f);
+
+
+
+            //System.out.println(Math.atan2(p.left.y,p.left.x+1)*180/Math.PI);
+
+
             this.player.draw();
             Gdx.gl11.glPopMatrix();
         }

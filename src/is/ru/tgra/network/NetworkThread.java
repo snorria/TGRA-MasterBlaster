@@ -38,7 +38,7 @@ public class NetworkThread extends Thread {
 	}	
 	
 	public void sendMessage(String message){
-		System.out.println("Sending message: " + message);
+		//System.out.println("Sending message: " + message);
 		this.out.write(message+"\n");
 		this.out.flush();
 	}
@@ -50,10 +50,10 @@ public class NetworkThread extends Thread {
 
 		
 		while(true) {
-			System.out.println("waiting of server message!");
+			//System.out.println("waiting of server message!");
 			try {
 				String message = this.in.readLine();
-				System.out.println("Received message from server: " + message);
+				//System.out.println("Received message from server: " + message);
 				
 				// We assume that the network messages are on csv format.
 				String[] tokens = message.split(";");
