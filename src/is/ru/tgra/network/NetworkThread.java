@@ -1,6 +1,7 @@
 package is.ru.tgra.network;
 
 import is.ru.tgra.Point3D;
+import is.ru.tgra.Shot;
 import is.ru.tgra.Vector3D;
 
 import java.io.BufferedReader;
@@ -81,8 +82,14 @@ public class NetworkThread extends Thread {
 
                     GameState.instance().updatePlayer(name, pos, forward, up);
 				}
-				
-			} catch (IOException e) {
+                if(tokens[0].equals("fire")) {
+                    Point3D start = new Point3D(Float.parseFloat(tokens[2]),Float.parseFloat(tokens[3]),Float.parseFloat(tokens[4]));
+                    Point3D end = new Point3D(Float.parseFloat(tokens[5]),Float.parseFloat(tokens[6]),Float.parseFloat(tokens[7]));
+                    Shot shot = new Shot(start,end);
+                    GameState.instance().addShot(name,shot);
+                }
+
+                } catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	

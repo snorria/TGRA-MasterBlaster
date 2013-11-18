@@ -1,6 +1,7 @@
 package is.ru.tgra.network;
 
 import is.ru.tgra.Point3D;
+import is.ru.tgra.Shot;
 import is.ru.tgra.Vector3D;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ public class GameState {
 	
 	private static GameState instance;
 	private HashMap<String, Player> players;
+    private HashMap<String, Shot> shots;
 	public String clientNickName;
 	
 	public static GameState instance(){
@@ -42,4 +44,17 @@ public class GameState {
             players.add(b);
 		return players;
 	}
+    public synchronized List<Shot> getShots(){
+        LinkedList<Shot> shots = new LinkedList<Shot>();
+        for(Shot s : this.shots.values())
+            shots.add(s);
+
+        this.shots.clear();
+        return shots;
+    }
+
+    public synchronized void addShot(String name, Shot shot)
+    {
+       this.shots.put(name,shot);
+    }
 }

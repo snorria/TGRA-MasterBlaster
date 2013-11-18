@@ -160,8 +160,8 @@ public class Core implements ApplicationListener{
             rightShot.add(Vector3D.sum(Vector3D.mult(1.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( 0f, cam.n))));
 
 
-            shots.add(new Shot(leftShot,shotEnd,this));
-            shots.add(new Shot(rightShot,shotEnd,this));
+            shots.add(new Shot(leftShot,shotEnd));
+            shots.add(new Shot(rightShot,shotEnd));
         }
         cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
 
@@ -307,7 +307,6 @@ public class Core implements ApplicationListener{
         //Gdx.gl11.glRotatef(-skyBoxRotation.y,up.x,up.y,up.z);
         Gdx.gl11.glRotatef(-skyBoxRotation.x, 1f, 0f, 0f);
         Gdx.gl11.glRotatef(-skyBoxRotation.y, 0f, 0f, 1f);
-
 
         this.player.draw();
         Gdx.gl11.glPopMatrix();
