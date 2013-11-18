@@ -14,13 +14,25 @@ public class GameState {
 	private HashMap<String, Player> players;
     private HashMap<String, Shot> shots;
 	public String clientNickName;
+    private boolean dead;
 	
 	public static GameState instance(){
 		if(instance == null)
 			instance = new GameState();
 		return instance;
 	}
-	
+	public synchronized boolean amIDead(){
+        if(dead){
+            dead = false;
+            return true;
+        }
+        return false;
+    }
+
+    public void setDead(){
+        dead = true;
+    }
+
 	private GameState() {
 		this.players = new HashMap<String, Player>();
         this.shots = new HashMap<String, Shot>();

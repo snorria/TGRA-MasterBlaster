@@ -94,11 +94,18 @@ public class NetworkThread extends Thread {
                 }
                 if(tokens[0].equals("killed")) {
                     String killer = tokens[1];
-                    if(tokens[2] == GameState.instance().clientNickName)
+                    System.out.println(tokens[2]);
+                    System.out.println(GameState.instance().clientNickName);
+                    if(tokens[2].equals(GameState.instance().clientNickName))
                     {
+                        System.out.println("Ég dó");
+
                         //Þú dóst
+                        GameState.instance().setDead();
                     }
                     else{
+                        System.out.println("Random dó");
+
                         //Einhver annar dó
                     }
                 }

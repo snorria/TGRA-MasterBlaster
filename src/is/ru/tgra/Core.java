@@ -78,6 +78,10 @@ public class Core implements ApplicationListener{
 
 
     private void update() {
+        if(GameState.instance().amIDead()){
+            this.ui.playerDied();
+        }
+
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         this.deltaTime = deltaTime;

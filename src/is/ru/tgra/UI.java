@@ -63,11 +63,13 @@ public class UI {
         Gdx.gl11.glNormal3f(0.0f, 0.0f, -1.0f);
         Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
         if(t>0.0f){
+            System.out.println("I'M DEAD YO");
             Gdx.gl11.glDisable(GL11.GL_TEXTURE_2D);
             Gdx.gl11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
             Gdx.gl11.glColor4f(t/4.0f,0.0f,0.0f,1.0f);
             Gdx.gl11.glNormal3f(0.0f, 0.0f, -1.0f);
-            Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+            Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 4, 4);
+            Gdx.gl11.glColor4f(1.0f,1.0f,1.0f,1.0f);
         }
         Gdx.gl11.glDisable(GL11.GL_BLEND);
         Gdx.gl11.glDisable(GL11.GL_ALPHA_TEST);
