@@ -153,7 +153,7 @@ public class Core implements ApplicationListener{
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gunCooldown <0.0f){
             //ShootLazer
             Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
-            shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -25235235235.0f, cam.n))));
+            shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -15000.0f, cam.n))));
 
             Point3D leftShot = new Point3D(playerPos.x,playerPos.y,playerPos.z);
             Point3D rightShot = new Point3D(playerPos.x,playerPos.y,playerPos.z);
