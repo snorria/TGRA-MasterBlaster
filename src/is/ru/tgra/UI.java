@@ -18,13 +18,20 @@ public class UI {
     FloatBuffer vertexBuffer;
     FloatBuffer texCoordBuffer;
     Texture tex;
+    float DEATHTIMER = 4.0f;
+    float t;
+
     public UI(){
-		this.vertexBuffer = BufferUtils.newFloatBuffer(12);
+		this.vertexBuffer = BufferUtils.newFloatBuffer(24);
 		this.vertexBuffer.put(new float[] {
 	            -0.08f, -0.08f, 0.0f,  // 0. left-bottom
                 0.08f, -0.08f, 0.0f,  // 1. right-bottom
 	            -0.08f, 0.08f, 0.0f,  // 2. left-top
-                0.08f, 0.08f, 0.0f   // 3. right-top
+                0.08f, 0.08f, 0.0f,   // 3. right-top
+                -1.0f, -1.0f, 0.0f,  // 0. left-bottom
+                1.0f, -1.0f, 0.0f,  // 1. right-bottom
+                -1.0f, 1.0f, 0.0f,  // 2. left-top
+                1.0f, 1.0f, 0.0f   // 3. right-top
 		});
 		this.vertexBuffer.rewind();
 
@@ -32,6 +39,9 @@ public class UI {
 		texCoordBuffer.put(new float[] {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f});
 		texCoordBuffer.rewind();
 		this.tex = new Texture(Gdx.files.internal("assets/textures/circle-01.png"));
+    }
+    public void update(float deltaTime){
+        t-=deltaTime;
     }
     public void draw(){
 
@@ -52,9 +62,19 @@ public class UI {
 
         Gdx.gl11.glNormal3f(0.0f, 0.0f, -1.0f);
         Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
-
+        if(t>0.0f){
+            Gdx.gl11.glDisable(GL11.GL_TEXTURE_2D);
+            Gdx.gl11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+            Gdx.gl11.glColor4f(t/4.0f,0.0f,0.0f,1.0f);
+            Gdx.gl11.glNormal3f(0.0f, 0.0f, -1.0f);
+            Gdx.gl11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+        }
         Gdx.gl11.glDisable(GL11.GL_BLEND);
         Gdx.gl11.glDisable(GL11.GL_ALPHA_TEST);
 
+    }
+
+    public void playerDied(){
+        t=DEATHTIMER;
     }
 }

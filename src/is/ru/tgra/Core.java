@@ -187,6 +187,7 @@ public class Core implements ApplicationListener{
             gunCooldown = GUNCD;
         }
         gunCooldown-=deltaTime;
+        this.ui.update(deltaTime);
         cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
 
         String message = String.format("move;%s;%s;%s;%s;%s;%s;%s;%s;%s",
