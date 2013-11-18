@@ -3,6 +3,7 @@ package is.ru.tgra;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.utils.BufferUtils;
 import is.ru.tgra.network.GameState;
@@ -30,6 +31,7 @@ public class Core implements ApplicationListener{
     List<Shot> shots = new ArrayList<Shot>();
     Point3D playerPos;
     ParticleEffect particleEffect;
+    Music music;
 
     Quad background;
 
@@ -70,6 +72,10 @@ public class Core implements ApplicationListener{
         this.player = new ShipModel();
         this.ui = new UI();
         Gdx.input.setCursorCatched(true);
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("Star Wars Rogue Squadron Soundtrack - Rogue Theme- Reprise.mp3"));
+        music.setLooping(true);
+        music.play();
     }
 
     @Override
