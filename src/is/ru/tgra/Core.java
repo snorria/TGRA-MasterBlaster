@@ -162,6 +162,26 @@ public class Core implements ApplicationListener{
 
             shots.add(new Shot(leftShot,shotEnd));
             shots.add(new Shot(rightShot,shotEnd));
+
+            String message1 = String.format("fire;%s;%s;%s;%s;%s;%s",
+                    Float.toString(leftShot.x),
+                    Float.toString(leftShot.y),
+                    Float.toString(leftShot.z),
+                    Float.toString(shotEnd.x),
+                    Float.toString(shotEnd.y),
+                    Float.toString(shotEnd.z)
+            );
+            String message2 = String.format("fire;%s;%s;%s;%s;%s;%s",
+                    Float.toString(rightShot.x),
+                    Float.toString(rightShot.y),
+                    Float.toString(rightShot.z),
+                    Float.toString(shotEnd.x),
+                    Float.toString(shotEnd.y),
+                    Float.toString(shotEnd.z)
+            );
+
+            this.network.sendMessage(message1);
+            this.network.sendMessage(message2);
         }
         cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
 
@@ -187,6 +207,10 @@ public class Core implements ApplicationListener{
                 shots.remove(i);
                 i--;
             }
+        }
+        for(Shot s : GameState.instance().getShots())
+        {
+            shots.add(s);
         }
     }
 
@@ -325,7 +349,7 @@ public class Core implements ApplicationListener{
             Gdx.gl11.glRotatef(d1,0f,1f,0f);
 
 
-            System.out.println("d1: "+d1);
+            //System.out.println("d1: "+d1);
 
             Float d2;
             if(Vector3D.cross(new Vector3D(0f,0f,-1f),p.forward).x<0)

@@ -23,6 +23,7 @@ public class GameState {
 	
 	private GameState() {
 		this.players = new HashMap<String, Player>();
+        this.shots = new HashMap<String, Shot>();
 	}
 	
 	public synchronized void removePlayer(String name){
@@ -49,7 +50,8 @@ public class GameState {
         for(Shot s : this.shots.values())
             shots.add(s);
 
-        this.shots.clear();
+        this.shots = new HashMap<String, Shot>();
+
         return shots;
     }
 
