@@ -38,7 +38,7 @@ public class Core implements ApplicationListener{
     Vector3D skyBoxRotation;
     private NetworkThread network;
     private UI ui;
-    boolean outOfBounds = false;
+    boolean outOfBounds = false, wasDead = false;
     private float gunCooldown;
     private float GUNCD = 0.3f;
     private float deathCooldown;
@@ -82,6 +82,12 @@ public class Core implements ApplicationListener{
     private void update() {
         if(GameState.instance().amIDead()){
             this.deathCooldown = DEATHTIMER;
+            wasDead = true;
+        }
+        else if(wasDead && this.deathCooldown <= 0){
+            String message = "alive";
+            this.network.sendMessage(message);
+            wasDead = false;
         }
 
         float deltaTime = Gdx.graphics.getDeltaTime();
@@ -171,7 +177,7 @@ public class Core implements ApplicationListener{
             outOfBounds = false;
         }
 
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gunCooldown <0.0f){
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gunCooldown <= 0.0f && this.deathCooldown <= 0){
             //ShootLazer
             Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
             shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult(-15000.0f, cam.n))));
@@ -209,9 +215,23 @@ public class Core implements ApplicationListener{
 
             for(Player p : GameState.instance().getPlayers()){
                 if(Point3D.LengthLine(p.pos,leftShot,shotEnd) < 1f || Point3D.LengthLine(p.pos,rightShot,shotEnd) < 1f){
-                    System.out.println("I GOT SHOT CAPTAIN, "+p.name);
                     String message = String.format("killed;%s",p.name);
                     this.network.sendMessage(message);
+                    GameState.instance().setDead(p.name);
+                }
+            }
+        }
+        if(deathCooldown < 0){
+            for(Player p : GameState.instance().getPlayers()){
+                if(!p.isDead){
+                    if(Vector3D.difference(p.pos,playerPos).length()<1.5f){
+                        String message = String.format("killed;%s",p.name);
+                        this.network.sendMessage(message);
+                        String message2 = String.format("killed;%s",GameState.instance().clientNickName);
+                        this.network.sendMessage(message2);
+                        GameState.instance().setDead(p.name);
+                        GameState.instance().setDead();
+                    }
                 }
             }
         }
@@ -371,47 +391,49 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glPopMatrix();
 */
         for(is.ru.tgra.network.Player p : GameState.instance().getPlayers()) {
-            Gdx.gl11.glPushMatrix();
+            if(!p.isDead){
+                Gdx.gl11.glPushMatrix();
 
-            //p.forward.
-            Gdx.gl11.glTranslatef(p.pos.x,p.pos.y,p.pos.z);
-            //Gdx.gl11.glRotatef((float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left),0f,1f,0f);
-            Float d1;
-            if(Vector3D.cross(new Vector3D(-1f,0f,0f),p.left).y<0)
-                d1 = (float) -Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
-            else
-                d1 = (float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
-            Gdx.gl11.glRotatef(d1,0f,1f,0f);
-
-
-            //System.out.println("d1: "+d1);
-
-            Float d2;
-            if(Vector3D.cross(new Vector3D(0f,0f,-1f),p.forward).x<0)
-                d2 = (float) -Vector3D.angle(new Vector3D(0f,0f,-1f),p.forward);
-            else
-                d2 = (float) Vector3D.angle(new Vector3D(0f,0f,-1f),p.forward);
-            //System.out.println("d2: "+d2);
-
-            //Gdx.gl11.glRotatef(d2,1f,0f,0f);
-
-            Float d3;
-
-            if(Vector3D.cross(new Vector3D(-1f,0f,0f),p.left).z<0)
-                d3 = (float) -Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
-            else
-                d3 = (float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
-
-            //System.out.println("d3: "+d3);
-            //Gdx.gl11.glRotatef(d3,0f,0f,1f);
+                //p.forward.
+                Gdx.gl11.glTranslatef(p.pos.x,p.pos.y,p.pos.z);
+                //Gdx.gl11.glRotatef((float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left),0f,1f,0f);
+                Float d1;
+                if(Vector3D.cross(new Vector3D(-1f,0f,0f),p.left).y<0)
+                    d1 = (float) -Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+                else
+                    d1 = (float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+                Gdx.gl11.glRotatef(d1,0f,1f,0f);
 
 
+                //System.out.println("d1: "+d1);
 
-            //System.out.println(Math.atan2(p.left.y,p.left.x+1)*180/Math.PI);
+                Float d2;
+                if(Vector3D.cross(new Vector3D(0f,0f,-1f),p.forward).x<0)
+                    d2 = (float) -Vector3D.angle(new Vector3D(0f,0f,-1f),p.forward);
+                else
+                    d2 = (float) Vector3D.angle(new Vector3D(0f,0f,-1f),p.forward);
+                //System.out.println("d2: "+d2);
+
+                //Gdx.gl11.glRotatef(d2,1f,0f,0f);
+
+                Float d3;
+
+                if(Vector3D.cross(new Vector3D(-1f,0f,0f),p.left).z<0)
+                    d3 = (float) -Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+                else
+                    d3 = (float) Vector3D.angle(new Vector3D(-1f,0f,0f),p.left);
+
+                //System.out.println("d3: "+d3);
+                //Gdx.gl11.glRotatef(d3,0f,0f,1f);
 
 
-            this.player.draw();
-            Gdx.gl11.glPopMatrix();
+
+                //System.out.println(Math.atan2(p.left.y,p.left.x+1)*180/Math.PI);
+
+
+                this.player.draw();
+                Gdx.gl11.glPopMatrix();
+            }
         }
         //shots
         for(Shot s: shots)

@@ -33,6 +33,14 @@ public class GameState {
         dead = true;
     }
 
+    public void setDead(String name){
+        if(this.players.containsKey(name))
+            this.players.get(name).isDead = true;
+    }
+    public void setAlive(String name){
+        if(this.players.containsKey(name))
+            this.players.get(name).isDead = false;
+    }
 	private GameState() {
 		this.players = new HashMap<String, Player>();
         this.shots = new HashMap<String, Shot>();

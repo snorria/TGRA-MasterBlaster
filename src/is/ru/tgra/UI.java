@@ -55,7 +55,6 @@ public class UI {
         Gdx.gl11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
 
         if(t>0.0f){
-            System.out.println("I'M DEAD YO");
             Gdx.gl11.glDisable(GL11.GL_TEXTURE_2D);
             Gdx.gl11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
             Gdx.gl11.glColor4f(t/4.0f,0.0f,0.0f,1.0f);

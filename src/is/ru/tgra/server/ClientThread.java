@@ -122,7 +122,12 @@ public class ClientThread extends Thread {
                     String p = String.format("killed;%s;%s", this.nick, tokens[1]);
                     ClientThreads.instance().broadcast(this, p);
                 }
-			} 
+                if(action.equals("alive")){
+                    String p = String.format("alive;%s", this.nick);
+                    ClientThreads.instance().broadcast(this, p);
+                }
+
+            }
 			catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

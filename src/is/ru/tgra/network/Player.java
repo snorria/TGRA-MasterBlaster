@@ -16,6 +16,7 @@ public class Player {
     public String name;
     public Point3D pos;
     public Vector3D forward, left;
+    public boolean isDead = false;
 
     public Player(Point3D pos, Vector3D forward, Vector3D left, String name)
     {
