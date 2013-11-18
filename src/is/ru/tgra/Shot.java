@@ -33,13 +33,14 @@ public class Shot {
         });
         this.vertexBuffer.rewind();
     }
-    public void update(float deltaTime)
+    public boolean update(float deltaTime)
     {
         timeElapsed+=deltaTime;
         if(timeElapsed>LIFETIME)
         {
-            delegate.shotDead(this);
+            return true;
         }
+        return false;
     }
     public void draw()
     {

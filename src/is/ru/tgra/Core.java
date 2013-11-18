@@ -153,8 +153,15 @@ public class Core implements ApplicationListener,ShotDelegate{
             Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
             shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -25235235235.0f, cam.n))));
 
-            Point3D leftShot = new Point3D()
-            shots = new Shot(playerPos,shotEnd);
+            Point3D leftShot = new Point3D(playerPos.x,playerPos.y,playerPos.z);
+            Point3D rightShot = new Point3D(playerPos.x,playerPos.y,playerPos.z);
+
+            leftShot.add(Vector3D.sum(Vector3D.mult(-1.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( 0f, cam.n))));
+            rightShot.add(Vector3D.sum(Vector3D.mult(1.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( 0f, cam.n))));
+
+
+            shots.add(new Shot(leftShot,shotEnd,this));
+            shots.add(new Shot(rightShot,shotEnd,this));
         }
         cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
 
@@ -172,8 +179,14 @@ public class Core implements ApplicationListener,ShotDelegate{
         this.network.sendMessage(message);
 
         //shots
-        if(!(shot == null)){
-            shot.update(deltaTime);
+        Shot tempShot;
+        for(int i = 0;i<shots.size();i++){
+            tempShot = shots.get(i);
+            if(tempShot.update(deltaTime))
+            {
+                shots.remove(i);
+                i--;
+            }
         }
     }
 
@@ -343,8 +356,9 @@ public class Core implements ApplicationListener,ShotDelegate{
             Gdx.gl11.glPopMatrix();
         }
         //shots
-        if(!(shot == null)){
-            shot.draw();
+        for(Shot s: shots)
+        {
+            s.draw();
         }
 
         //UI
