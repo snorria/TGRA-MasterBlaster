@@ -9,6 +9,8 @@ import is.ru.tgra.network.GameState;
 import is.ru.tgra.network.NetworkThread;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,13 +25,13 @@ public class Core implements ApplicationListener{
     Cube cube;
     CrystalBox cbox;
     ShipModel player;
-    Shot shot;
+    List<Shot> shots = new ArrayList<Shot>();
     Point3D playerPos;
     ParticleEffect particleEffect;
 
     Quad background;
 
-    float rotationAngle = 0.0f;
+    float rotationAngle = 0.0f, playerSpeed = 10.0f;
     float deltaTime = 0.0f;
     Vector3D skyBoxRotation;
     private NetworkThread network;
@@ -50,7 +52,7 @@ public class Core implements ApplicationListener{
 
         Gdx.gl11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 
-        cam = new Camera(new Point3D(1.0f, 1.0f, 1.0f), new Point3D(1.0f, 0.0f, 2.0f), new Vector3D(0.0f, -1.0f, 0.0f));
+        cam = new Camera(new Point3D(1.0f, 1.0f, 1.0f), new Point3D(1.0f, 1.0f, 0.0f), new Vector3D(0.0f, 1.0f, 0.0f));
 
         sphere = new Sphere(50, 24);
         cube = new Cube("assets/textures/wood2.jpeg");
@@ -96,6 +98,8 @@ public class Core implements ApplicationListener{
             cam.yaw(90.0f * deltaTime);
             skyBoxRotation.y +=-90.0f * deltaTime;
         }
+
+        /*
         if(Gdx.input.isKeyPressed(Input.Keys.W))
         {
             cam.slide(0.0f, 0.0f, -10.0f * deltaTime);
@@ -122,7 +126,7 @@ public class Core implements ApplicationListener{
         {
             cam.slide(0.0f, -10.0f * deltaTime, 0.0f);
         }
-
+        */
 
         float x = Gdx.input.getDeltaX();
         x = Gdx.graphics.getWidth()/2-Gdx.input.getX();
@@ -142,14 +146,18 @@ public class Core implements ApplicationListener{
         this.particleEffect.update(deltaTime);
 
         playerPos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
-        playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-1.5f, cam.v), Vector3D.mult(-2.0f, cam.n))));
+        playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-0.5f, cam.v), Vector3D.mult(0.0f, cam.n))));
 
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             //ShootLazer
             Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
             shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -25235235235.0f, cam.n))));
-            shot = new Shot(playerPos,shotEnd);
+
+            Point3D leftShot = new Point3D()
+            shots = new Shot(playerPos,shotEnd);
         }
+        cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
+
         String message = String.format("move;%s;%s;%s;%s;%s;%s;%s;%s;%s",
                 Float.toString(playerPos.x),
                 Float.toString(playerPos.y),
@@ -277,16 +285,20 @@ public class Core implements ApplicationListener{
         sphere.draw();
         Gdx.gl11.glPopMatrix();
 
+        /*
         //Draw this client
         Gdx.gl11.glPushMatrix();
         Vector3D up = Vector3D.cross(cam.n,cam.u);
         Gdx.gl11.glTranslatef(playerPos.x, playerPos.y, playerPos.z);
-        Gdx.gl11.glRotatef(-skyBoxRotation.x, cam.u.x, cam.u.y, cam.u.z);
-        Gdx.gl11.glRotatef(-skyBoxRotation.y,up.x,up.y,up.z);
+        //Gdx.gl11.glRotatef(-skyBoxRotation.x, cam.u.x, cam.u.y, cam.u.z);
+        //Gdx.gl11.glRotatef(-skyBoxRotation.y,up.x,up.y,up.z);
+        Gdx.gl11.glRotatef(-skyBoxRotation.x, 1f, 0f, 0f);
+        Gdx.gl11.glRotatef(-skyBoxRotation.y, 0f, 0f, 1f);
+
 
         this.player.draw();
         Gdx.gl11.glPopMatrix();
-
+*/
         for(is.ru.tgra.network.Player p : GameState.instance().getPlayers()) {
             Gdx.gl11.glPushMatrix();
 
