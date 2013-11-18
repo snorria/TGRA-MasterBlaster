@@ -41,6 +41,8 @@ public class Core implements ApplicationListener{
     boolean outOfBounds = false;
     private float gunCooldown;
     private float GUNCD = 0.3f;
+    private float deathCooldown;
+    private float DEATHTIMER = 4.0f;
 
 
     @Override
@@ -79,7 +81,7 @@ public class Core implements ApplicationListener{
 
     private void update() {
         if(GameState.instance().amIDead()){
-            this.ui.playerDied();
+            this.deathCooldown = DEATHTIMER;
         }
 
         float deltaTime = Gdx.graphics.getDeltaTime();
@@ -214,7 +216,8 @@ public class Core implements ApplicationListener{
             }
         }
         gunCooldown-=deltaTime;
-        this.ui.update(deltaTime);
+        deathCooldown-=deltaTime;
+        this.ui.update(deathCooldown);
         cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
 
         String message = String.format("move;%s;%s;%s;%s;%s;%s;%s;%s;%s",
