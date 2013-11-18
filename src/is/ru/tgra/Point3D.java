@@ -26,4 +26,8 @@ public class Point3D
 		y += v.y;
 		z += v.z;
 	}
+
+    public static float LengthLine(Point3D p0, Point3D p1, Point3D p2){
+        return (Vector3D.cross(Vector3D.difference(p0,p1),Vector3D.difference(p0,p2)).length())/(Vector3D.difference(p2,p1).length());
+    }
 }

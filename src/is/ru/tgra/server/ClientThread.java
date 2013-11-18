@@ -81,6 +81,7 @@ public class ClientThread extends Thread {
 		
 		// Remove my name from the list.
 		connectedPlayers.remove(this.nick);
+        this.sendMessage(String.format("you;%s",this.nick));
 		
 		for(String p : connectedPlayers) {
 			this.sendMessage(String.format("online;%s", p));
@@ -115,6 +116,10 @@ public class ClientThread extends Thread {
 				}
                 if(action.equals("fire")){
                     String p = String.format("fire;%s;%s;%s;%s;%s;%s;%s", this.nick, tokens[1], tokens[2], tokens[3],tokens[4],tokens[5],tokens[6]);
+                    ClientThreads.instance().broadcast(this, p);
+                }
+                if(action.equals("killed")){
+                    String p = String.format("killed;%s;%s", this.nick, tokens[1]);
                     ClientThreads.instance().broadcast(this, p);
                 }
 			} 

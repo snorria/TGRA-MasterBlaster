@@ -31,7 +31,7 @@ public class GameState {
 	}
 	
 	public synchronized void addPlayer(String name) {
-		this.players.put(name, new Player());
+		this.players.put(name, new Player(name));
 	}
 
 	public void updatePlayer(String name, Point3D pos, Vector3D forward, Vector3D up) {

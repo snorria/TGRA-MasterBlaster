@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.utils.BufferUtils;
 import is.ru.tgra.network.GameState;
 import is.ru.tgra.network.NetworkThread;
+import is.ru.tgra.network.Player;
+import is.ru.tgra.server.ClientThread;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -31,11 +33,12 @@ public class Core implements ApplicationListener{
 
     Quad background;
 
-    float rotationAngle = 0.0f, playerSpeed = 10.0f;
+    float rotationAngle = 0.0f, playerSpeed = 30.0f;
     float deltaTime = 0.0f;
     Vector3D skyBoxRotation;
     private NetworkThread network;
     private UI ui;
+    boolean outOfBounds = false;
     private float gunCooldown;
     private float GUNCD = 0.3f;
 
@@ -79,81 +82,93 @@ public class Core implements ApplicationListener{
 
         this.deltaTime = deltaTime;
         rotationAngle += 10.0f * deltaTime;
+        if(!outOfBounds){
+            if(Gdx.input.isKeyPressed(Input.Keys.UP))
+            {
+                cam.pitch(-90.0f * deltaTime);
+                skyBoxRotation.x +=90.0f * deltaTime;
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            {
+                cam.pitch(90.0f * deltaTime);
+                skyBoxRotation.x +=-90.0f * deltaTime;
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            {
+                cam.yaw(-90.0f * deltaTime);
+                skyBoxRotation.y +=90.0f * deltaTime;
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+            {
+                cam.yaw(90.0f * deltaTime);
+                skyBoxRotation.y +=-90.0f * deltaTime;
+            }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.UP))
-        {
-            cam.pitch(-90.0f * deltaTime);
-            skyBoxRotation.x +=90.0f * deltaTime;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
-        {
-            cam.pitch(90.0f * deltaTime);
-            skyBoxRotation.x +=-90.0f * deltaTime;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
-        {
-            cam.yaw(-90.0f * deltaTime);
-            skyBoxRotation.y +=90.0f * deltaTime;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-        {
-            cam.yaw(90.0f * deltaTime);
-            skyBoxRotation.y +=-90.0f * deltaTime;
-        }
-
-        /*
-        if(Gdx.input.isKeyPressed(Input.Keys.W))
-        {
-            cam.slide(0.0f, 0.0f, -10.0f * deltaTime);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.S))
-        {
-            cam.slide(0.0f, 0.0f, 10.0f * deltaTime);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.A))
-        {
-            cam.slide(-10.0f * deltaTime, 0.0f, 0.0f);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.D))
-        {
-            cam.slide(10.0f * deltaTime, 0.0f, 0.0f);
-        }
+            /*
+            if(Gdx.input.isKeyPressed(Input.Keys.W))
+            {
+                cam.slide(0.0f, 0.0f, -10.0f * deltaTime);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.S))
+            {
+                cam.slide(0.0f, 0.0f, 10.0f * deltaTime);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.A))
+            {
+                cam.slide(-10.0f * deltaTime, 0.0f, 0.0f);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.D))
+            {
+                cam.slide(10.0f * deltaTime, 0.0f, 0.0f);
+            }
 
 
-        if(Gdx.input.isKeyPressed(Input.Keys.R))
-        {
-            cam.slide(0.0f, 10.0f * deltaTime, 0.0f);
+            if(Gdx.input.isKeyPressed(Input.Keys.R))
+            {
+                cam.slide(0.0f, 10.0f * deltaTime, 0.0f);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.F))
+            {
+                cam.slide(0.0f, -10.0f * deltaTime, 0.0f);
+            }
+            */
+
+            float x = Gdx.input.getDeltaX();
+            x = Gdx.graphics.getWidth()/2-Gdx.input.getX();
+            float y = Gdx.input.getDeltaY();
+            y = Gdx.graphics.getHeight()/2-Gdx.input.getY();
+
+            float sensitivity = 1.4f;
+
+            cam.pitch(sensitivity*y * deltaTime);
+            skyBoxRotation.x +=sensitivity*-y * deltaTime;
+
+            cam.yaw(sensitivity*-x* deltaTime);
+            skyBoxRotation.y +=sensitivity*-x * deltaTime;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.F))
-        {
-            cam.slide(0.0f, -10.0f * deltaTime, 0.0f);
-        }
-        */
-
-        float x = Gdx.input.getDeltaX();
-        x = Gdx.graphics.getWidth()/2-Gdx.input.getX();
-        float y = Gdx.input.getDeltaY();
-        y = Gdx.graphics.getHeight()/2-Gdx.input.getY();
-
-        float sensitivity = 1.4f;
-
-        cam.pitch(sensitivity*y * deltaTime);
-        skyBoxRotation.x +=sensitivity*-y * deltaTime;
-
-        cam.yaw(sensitivity*-x* deltaTime);
-        skyBoxRotation.y +=sensitivity*-x * deltaTime;
         Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         //System.out.println("("+x+","+y+")");
 
         this.particleEffect.update(deltaTime);
 
+        cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
+
         playerPos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
         playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-0.5f, cam.v), Vector3D.mult(0.0f, cam.n))));
+
+        if(playerPos.x < -200f || playerPos.x > 200f || playerPos.y < -200f || playerPos.y > 200f || playerPos.z < -200f || playerPos.z > 200f){
+            cam.pitch(90f*deltaTime);
+            outOfBounds = true;
+        }
+        else
+        {
+            outOfBounds = false;
+        }
 
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gunCooldown <0.0f){
             //ShootLazer
             Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
-            shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -15000.0f, cam.n))));
+            shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult(-15000.0f, cam.n))));
 
             Point3D leftShot = new Point3D(playerPos.x,playerPos.y,playerPos.z);
             Point3D rightShot = new Point3D(playerPos.x,playerPos.y,playerPos.z);
@@ -185,6 +200,14 @@ public class Core implements ApplicationListener{
             this.network.sendMessage(message1);
             this.network.sendMessage(message2);
             gunCooldown = GUNCD;
+
+            for(Player p : GameState.instance().getPlayers()){
+                if(Point3D.LengthLine(p.pos,leftShot,shotEnd) < 1f || Point3D.LengthLine(p.pos,rightShot,shotEnd) < 1f){
+                    System.out.println("I GOT SHOT CAPTAIN, "+p.name);
+                    String message = String.format("killed;%s",p.name);
+                    this.network.sendMessage(message);
+                }
+            }
         }
         gunCooldown-=deltaTime;
         this.ui.update(deltaTime);
@@ -276,7 +299,7 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glPushMatrix();
         Gdx.gl11.glTranslatef(0f, 0f, 0f);
 
-        Gdx.gl11.glScalef(500, 500, 500);
+        Gdx.gl11.glScalef(750, 750, 750);
         this.background.draw();
 
         Gdx.gl11.glPopMatrix();

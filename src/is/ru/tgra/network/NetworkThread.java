@@ -63,6 +63,10 @@ public class NetworkThread extends Thread {
 				if(tokens[0].equals("online")) {
 					GameState.instance().addPlayer(name);
 				}
+
+                if(tokens[0].equals("you")) {
+                    GameState.instance().clientNickName = name;
+                }
 				
 				if(tokens[0].equals("join")) {
 					GameState.instance().addPlayer(name);
@@ -87,6 +91,16 @@ public class NetworkThread extends Thread {
                     Point3D end = new Point3D(Float.parseFloat(tokens[5]),Float.parseFloat(tokens[6]),Float.parseFloat(tokens[7]));
                     Shot shot = new Shot(start,end);
                     GameState.instance().addShot(name,shot);
+                }
+                if(tokens[0].equals("killed")) {
+                    String killer = tokens[1];
+                    if(tokens[2] == GameState.instance().clientNickName)
+                    {
+                        //Þú dóst
+                    }
+                    else{
+                        //Einhver annar dó
+                    }
                 }
 
                 } catch (IOException e) {
