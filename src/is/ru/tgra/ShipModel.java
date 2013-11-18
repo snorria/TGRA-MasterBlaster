@@ -61,8 +61,6 @@ public class ShipModel {
     }
     public void draw()
     {
-
-        Gdx.gl11.glRotatef(-30.0f,1.0f,0.0f,0.0f);
         //TODO: Normals.....
         Gdx.gl11.glShadeModel(GL11.GL_SMOOTH);
         Gdx.gl11.glVertexPointer(3, GL11.GL_FLOAT, 0, vertexBuffer);
