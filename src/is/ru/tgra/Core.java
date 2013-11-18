@@ -36,6 +36,8 @@ public class Core implements ApplicationListener{
     Vector3D skyBoxRotation;
     private NetworkThread network;
     private UI ui;
+    private float gunCooldown;
+    private float GUNCD = 0.3f;
 
 
     @Override
@@ -148,7 +150,7 @@ public class Core implements ApplicationListener{
         playerPos = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
         playerPos.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(-0.5f, cam.v), Vector3D.mult(0.0f, cam.n))));
 
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gunCooldown <0.0f){
             //ShootLazer
             Point3D shotEnd = new Point3D(cam.eye.x,cam.eye.y,cam.eye.z);
             shotEnd.add(Vector3D.sum(Vector3D.mult(0.0f, cam.u), Vector3D.sum(Vector3D.mult(0.0f, cam.v), Vector3D.mult( -25235235235.0f, cam.n))));
@@ -182,7 +184,9 @@ public class Core implements ApplicationListener{
 
             this.network.sendMessage(message1);
             this.network.sendMessage(message2);
+            gunCooldown = GUNCD;
         }
+        gunCooldown-=deltaTime;
         cam.slide(0.0f, 0.0f, -playerSpeed * deltaTime);
 
         String message = String.format("move;%s;%s;%s;%s;%s;%s;%s;%s;%s",
@@ -284,12 +288,12 @@ public class Core implements ApplicationListener{
 
 
 
-        Gdx.gl11.glPushMatrix();
+ /*       Gdx.gl11.glPushMatrix();
         Gdx.gl11.glTranslatef(0f, 0.5f, 0f);
         this.particleEffect.display();
 
         Gdx.gl11.glPopMatrix();
-
+*/
 
         float[] lightDiffuse = {1.0f, 1.0f, 1.0f, 1.0f};
         Gdx.gl11.glLightfv(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, lightDiffuse, 0);
@@ -305,10 +309,10 @@ public class Core implements ApplicationListener{
 
         float[] materialDiffuse = {1.0f, 1.0f, 1.0f, 0.6f};
         Gdx.gl11.glMaterialfv(GL11.GL_FRONT, GL11.GL_DIFFUSE, materialDiffuse, 0);
-
+/*
         drawFloor();
-
-        Gdx.gl11.glPushMatrix();
+*/
+/*        Gdx.gl11.glPushMatrix();
         Gdx.gl11.glTranslatef(2.0f, 2.0f, 2.0f);
         //cube.draw();
         this.cbox.draw();
@@ -321,7 +325,7 @@ public class Core implements ApplicationListener{
         Gdx.gl11.glRotatef(rotationAngle, 0.0f, 1.0f, 0.0f);
         sphere.draw();
         Gdx.gl11.glPopMatrix();
-
+*/
         /*
         //Draw this client
         Gdx.gl11.glPushMatrix();
@@ -400,7 +404,6 @@ public class Core implements ApplicationListener{
 
         Gdx.gl11.glDepthMask(false);
         this.ui.draw();
-
         Gdx.gl11.glDepthMask(true);
 
         // pop model view matrix

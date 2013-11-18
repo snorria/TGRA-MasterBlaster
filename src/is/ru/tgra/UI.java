@@ -41,7 +41,7 @@ public class UI {
         Gdx.gl11.glEnable(GL11.GL_TEXTURE_2D);
         Gdx.gl11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         Gdx.gl11.glEnable(GL11.GL_ALPHA_TEST);
-        //Gdx.gl11.glAlphaFunc(GL11.GL_GREATER, 0.15f);
+        Gdx.gl11.glAlphaFunc(GL11.GL_GREATER, 0.15f);
 
         Gdx.gl11.glEnable(GL11.GL_BLEND);
         Gdx.gl11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_DST_ALPHA);
