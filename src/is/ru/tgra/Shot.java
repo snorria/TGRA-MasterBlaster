@@ -19,8 +19,10 @@ public class Shot {
     float timeElapsed;
     float LIFETIME = 0.5f;
     FloatBuffer vertexBuffer;
+    ShotDelegate delegate;
 
-    public Shot(Point3D startPos, Point3D endPos){
+    public Shot(Point3D startPos, Point3D endPos,ShotDelegate delegate){
+        this.delegate = delegate;
         this.startPos = startPos;
         this.endPos = endPos;
         timeElapsed = 0.0f;
@@ -34,6 +36,10 @@ public class Shot {
     public void update(float deltaTime)
     {
         timeElapsed+=deltaTime;
+        if(timeElapsed>LIFETIME)
+        {
+            delegate.shotDead(this);
+        }
     }
     public void draw()
     {

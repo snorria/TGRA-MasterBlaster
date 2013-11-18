@@ -19,7 +19,7 @@ import java.util.List;
  * Time: 13:15
  * To change this template use File | Settings | File Templates.
  */
-public class Core implements ApplicationListener{
+public class Core implements ApplicationListener,ShotDelegate{
     Camera cam;
     Sphere sphere;
     Cube cube;
@@ -394,5 +394,10 @@ public class Core implements ApplicationListener{
     public void resume() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void shotDead(Shot s) {
+        shots.remove(s);
     }
 }
