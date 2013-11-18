@@ -19,10 +19,8 @@ public class Shot {
     float timeElapsed;
     float LIFETIME = 0.5f;
     FloatBuffer vertexBuffer;
-    ShotDelegate delegate;
 
-    public Shot(Point3D startPos, Point3D endPos,ShotDelegate delegate){
-        this.delegate = delegate;
+    public Shot(Point3D startPos, Point3D endPos){
         this.startPos = startPos;
         this.endPos = endPos;
         timeElapsed = 0.0f;
@@ -50,15 +48,22 @@ public class Shot {
             Gdx.gl11.glPushMatrix();
             Gdx.gl11.glTranslatef(this.startPos.x,this.startPos.y,this.startPos.z);
             Gdx.gl11.glDisable(GL11.GL_LIGHTING);
-            Gdx.gl11.glColor4f(0.0f,0.0f,1.0f,1.0f);
-            if(timeElapsed<0.2)
+            if(timeElapsed<0.2){
+                Gdx.gl11.glColor4f(0.0f,0.0f,1.0f,1.0f);
                 Gdx.gl11.glLineWidth(3.5f);
-            else if(timeElapsed<0.3)
+            }
+            else if(timeElapsed<0.3){
+                Gdx.gl11.glColor4f(0.0f,0.0f,0.9f,0.9f);
                 Gdx.gl11.glLineWidth(2.0f);
-            else if(timeElapsed<0.4)
+            }
+            else if(timeElapsed<0.4){
+                Gdx.gl11.glColor4f(0.0f,0.0f,0.6f,0.6f);
                 Gdx.gl11.glLineWidth(1.5f);
-            else
+            }
+            else{
+                Gdx.gl11.glColor4f(0.0f,0.0f,0.4f,0.4f);
                 Gdx.gl11.glLineWidth(1.0f);
+            }
             Gdx.gl11.glDrawArrays(GL11.GL_LINES, 0, 2);
             Gdx.gl11.glLineWidth(1.0f);
             Gdx.gl11.glColor4f(1.0f,1.0f,1.0f,1.0f);
